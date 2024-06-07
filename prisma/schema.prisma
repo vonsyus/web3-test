@@ -17,9 +17,10 @@ model User {
   id       Int        @id @default(autoincrement())
   address  String
   username String
-  fromUser Activity[] @relation("reporter")
-  toUser   Activity[] @relation("user")
+  fromUser Activity[] @relation("fromUser")
+  toUser   Activity[] @relation("toUser")
   Contract Contract?
+  Token    Token?
 }
 
 model Contract {
@@ -41,6 +42,8 @@ model Token {
   description String
   contract    Contract  @relation(fields: [contractId], references: [id])
   contractId  Int       @unique
+  owner       User      @relation(fields: [ownerId], references: [id])
+  ownerId     Int       @unique
   Activity    Activity?
 }
 
@@ -56,9 +59,9 @@ model Activity {
   eventType  Int
   token      Token @relation(fields: [tokenId], references: [id])
   tokenId    Int   @unique
-  fromUser   User  @relation("user", fields: [fromUserId], references: [id])
+  fromUser   User  @relation("fromUser", fields: [fromUserId], references: [id])
   fromUserId Int   @unique
-  toUser     User  @relation("reporter", fields: [toUserId], references: [id])
+  toUser     User  @relation("toUser", fields: [toUserId], references: [id])
   toUserId   Int   @unique
   price      Int
 }
