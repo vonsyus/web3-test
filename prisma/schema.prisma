@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  address  String
+  username String
+  fromUser Activity[] @relation("reporter")
+  toUser   Activity[] @relation("user")
+  Contract Contract?
+}
+
+model Contract {
+  id                 Int    @id @default(autoincrement())
+  address            String
+  name               String
+  symbol             String
+  tokenType          String
+  contractDeployer   User   @relation(fields: [contractDeployerId], references: [id])
+  contractDeployerId Int    @unique
+  Token              Token?
+  ABIs               ABIs?
+}
+
+model Token {
+  id          Int       @id @default(autoincrement())
+  tokenType   String
+  name        String
+  description String
+  contract    Contract  @relation(fields: [contractId], references: [id])
+  contractId  Int       @unique
+  Activity    Activity?
+}
+
+model ABIs {
+  id         Int      @id @default(autoincrement())
+  contract   Contract @relation(fields: [contractId], references: [id])
+  contractId Int      @unique
+  abi        String
+}
+
+model Activity {
+  id         Int   @id @default(autoincrement())
+  eventType  Int
+  token      Token @relation(fields: [tokenId], references: [id])
+  tokenId    Int   @unique
+  fromUser   User  @relation("user", fields: [fromUserId], references: [id])
+  fromUserId Int   @unique
+  toUser     User  @relation("reporter", fields: [toUserId], references: [id])
+  toUserId   Int   @unique
+  price      Int
+}

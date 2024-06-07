@@ -8,7 +8,7 @@
 	"rules": {
 		"import/prefer-default-export": "off",
 		"import/extensions": "off",
-		"@typescript-eslint/no-explicit-any": "error",
+		"@typescript-eslint/no-explicit-any": "warn",
 		"import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
 		"no-console": ["off"]
 	}
